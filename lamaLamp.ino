@@ -1,4 +1,4 @@
-int led = 9;           // the pin that the LED is attached to
+int led = 9;           
 int led2 = 6;
 int brightness = 0;    // how bright the LED is
 int fadeAmount = 10;    // how many points to fade the LED by
@@ -8,7 +8,7 @@ int input = 0;
 void setup()  { 
   
   Serial.begin(9600);
-  // declare pin 9 to be an output:
+  
   pinMode(led, OUTPUT);
   pinMode(led2, OUTPUT);
 } 
@@ -17,11 +17,7 @@ void loop()  {
   
     input = Serial.read();
     
-    //Serial.print("input: ");
-    //Serial.println(input);
-    
-    switch (input) {
-    
+    switch (input) {    
     case '0':
       brightness = 0;
       Serial.print("Helligkeit: 0% (");
@@ -39,29 +35,25 @@ void loop()  {
       Serial.print("Helligkeit: 50% (");
       Serial.print(brightness);
       Serial.println(")");
-    break;
-    
+    break; 
     case '3':
       brightness = 192;
       Serial.print("Helligkeit: 75% (");
       Serial.print(brightness);
       Serial.println(")");
     break;
-    
     case '4':
       brightness = 255;
       Serial.print("Helligkeit: 100% (");
       Serial.print(brightness);
       Serial.println(")");
     break;
-    
     case '9':
       brightness = 10;
       Serial.print("Nachtlicht (");
       Serial.print(brightness);
       Serial.println(")");
     break;
-    
     case '+':
       brightness = brightness + fadeAmount;
       if (brightness >= limit) {
@@ -71,7 +63,6 @@ void loop()  {
       Serial.print(brightness);
       Serial.println(")");
     break;
-    
     case '-':
       brightness = brightness - fadeAmount;
       if (brightness <= 0) {
@@ -82,7 +73,6 @@ void loop()  {
       Serial.println(")");
     break;
     }
-       
   analogWrite(led, brightness);
   analogWrite(led2, brightness);  
   }
