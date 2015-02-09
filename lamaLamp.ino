@@ -1,13 +1,13 @@
-int led = 9;           
-int led2 = 6;
-int brightness = 0;    // how bright the LED is
-int fadeAmount = 10;    // how many points to fade the LED by
-int limit = 255;
+int led = 9;           //pin for controlling the first bunch of LEDs
+int led2 = 6;          //pin for controlling the second bunch of LEDs
+int brightness = 0;    //how bright the LEDs are when the lamp is pluged in
+int fadeAmount = 10;   //how many points to dim the LED
+int limit = 255;       //limit the brightness (PWM-range is from 0=off to 255=bright)
 int input = 0;
 
 void setup()  { 
   
-  Serial.begin(9600);
+  Serial.begin(9600);  //begin serial communication
   
   pinMode(led, OUTPUT);
   pinMode(led2, OUTPUT);
