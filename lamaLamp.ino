@@ -1,9 +1,13 @@
 int led = 9;           //pin for controlling the first bunch of LEDs
 int led2 = 6;          //pin for controlling the second bunch of LEDs
 int brightness = 0;    //how bright the LEDs are when the lamp is pluged in
-int fadeAmount = 10;   //how many points to dim the LED
+int dimAmount = 10;
+int fadeAmount = 1;   //how many points in the PWM-range to dim the LED
+int fadeDelay = 10;    //the bigger the delay, the slower it fades
+boolean fadeDir = true;//if fadeDir is true it fades up, if it is false it fades down
 int limit = 255;       //limit the brightness (PWM-range is from 0=off to 255=bright)
 int input = 0;
+boolean fade = false;
 
 void setup()  { 
   
@@ -48,6 +52,16 @@ void loop()  {
       Serial.print(brightness);
       Serial.println(")");
     break;
+    case '8':
+      if (fade == false) {
+        fade = true;
+        Serial.println("fade = on");
+      }
+      else {
+        fade = false;
+        Serial.println("fade = off");
+      }
+    break;
     case '9':
       brightness = 10;
       Serial.print("Nachtlicht (");
@@ -55,7 +69,7 @@ void loop()  {
       Serial.println(")");
     break;
     case '+':
-      brightness = brightness + fadeAmount;
+      brightness = brightness + dimAmount;
       if (brightness >= limit) {
         brightness = limit;
       }
@@ -64,7 +78,7 @@ void loop()  {
       Serial.println(")");
     break;
     case '-':
-      brightness = brightness - fadeAmount;
+      brightness = brightness - dimAmount;
       if (brightness <= 0) {
         brightness = 0;
       }    
@@ -73,18 +87,39 @@ void loop()  {
       Serial.println(")");
     break;
     }
+    
+  delay(fadeDelay);
+  
   analogWrite(led, brightness);
-  analogWrite(led2, brightness);  
-  }
-/*
-  // change the brightness for next time through the loop:
-  brightness = brightness + fadeAmount;
+  analogWrite(led2, brightness);
 
-  // reverse the direction of the fading at the ends of the fade: 
-  if (brightness >= 200) {
-    fadeAmount = -fadeAmount; 
-  } 
-if (brightness <= 0) {
-fadeAmount = -fadeAmount; 
+
+  if (fade == true) 
+  {    
+    if (fadeDir == true)
+    {
+      if ((brightness + fadeAmount) >= limit) 
+      {
+       brightness = limit;
+       fadeDir = false; 
+      }
+      else
+      {
+        brightness = brightness + fadeAmount;
+      }
+    }
+      else
+    { 
+      if ((brightness - fadeAmount) <= 0)
+      {
+        brightness = 0;  
+        fadeDir = true;
+      }
+       else
+       {
+         brightness = brightness - fadeAmount;
+       }
+    } 
+  }
 }
-*/
+
