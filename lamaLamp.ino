@@ -8,6 +8,8 @@ boolean fadeDir = true;//if fadeDir is true it fades up, if it is false it fades
 int limit = 255;       //limit the brightness (PWM-range is from 0=off to 255=bright)
 int input = 0;
 boolean fade = false;
+int sensorValue = 0;
+String state = "off";
 
 void setup()  { 
   
@@ -20,71 +22,63 @@ void setup()  {
 void loop()  { 
   
     input = Serial.read();
-    
+    sensorValue = analogRead(A0);
+
     switch (input) {    
     case '0':
       brightness = 0;
-      Serial.print("Helligkeit: 0% (");
-      Serial.print(brightness);
-      Serial.println(")");
+      state = "OFF";
+      printState();
+      //Serial.print("Helligkeit: 0% (");
+      //Serial.print(brightness);
+      //Serial.println(")");
     break; 
     case '1':
       brightness = 64;
-      Serial.print("Helligkeit: 25% (");
-      Serial.print(brightness);
-      Serial.println(")");
+      state = "ON";
+      printState();
     break;
     case '2':
       brightness = 127;
-      Serial.print("Helligkeit: 50% (");
-      Serial.print(brightness);
-      Serial.println(")");
+      state = "ON";
+      printState();
     break; 
     case '3':
       brightness = 192;
-      Serial.print("Helligkeit: 75% (");
-      Serial.print(brightness);
-      Serial.println(")");
+      state = "ON";
+      printState();
     break;
     case '4':
       brightness = 255;
-      Serial.print("Helligkeit: 100% (");
-      Serial.print(brightness);
-      Serial.println(")");
+      state = "ON";
+      printState();
     break;
     case '8':
       if (fade == false) {
         fade = true;
-        Serial.println("fade = on");
+        state = "FADING";
+        printState();
       }
       else {
         fade = false;
-        Serial.println("fade = off");
+        state = "ON";
+        printState();
       }
     break;
     case '9':
       brightness = 10;
-      Serial.print("Nachtlicht (");
-      Serial.print(brightness);
-      Serial.println(")");
+      state = "NIGHTLIGHT";
+      printState();;
     break;
     case '+':
-      brightness = brightness + dimAmount;
-      if (brightness >= limit) {
-        brightness = limit;
-      }
-      Serial.print("heller (");
-      Serial.print(brightness);
-      Serial.println(")");
+      state = "ON";
+      dimUp();
+      printState();
     break;
     case '-':
-      brightness = brightness - dimAmount;
-      if (brightness <= 0) {
-        brightness = 0;
-      }    
-      Serial.print("dunkler (");
-      Serial.print(brightness);
-      Serial.println(")");
+      state = "ON";
+      dimDown();    
+      printState();;
     break;
     }
     
@@ -92,34 +86,73 @@ void loop()  {
   
   analogWrite(led, brightness);
   analogWrite(led2, brightness);
+  
+  //Serial.println(sensorValue);
 
 
-  if (fade == true) 
-  {    
-    if (fadeDir == true)
-    {
-      if ((brightness + fadeAmount) >= limit) 
-      {
+  if (fade == true) {    
+    fader();
+  }
+}
+  
+  //---------------------------------------------------------------------//
+  
+  void fader () {
+         if (fadeDir == true) {
+      if ((brightness + fadeAmount) >= limit) {
        brightness = limit;
        fadeDir = false; 
       }
-      else
-      {
-        brightness = brightness + fadeAmount;
+      else {
+        fadeUp();
       }
     }
-      else
-    { 
-      if ((brightness - fadeAmount) <= 0)
-      {
+      else { 
+      if ((brightness - fadeAmount) <= 0) {
         brightness = 0;  
         fadeDir = true;
       }
-       else
-       {
-         brightness = brightness - fadeAmount;
+       else {
+         fadeDown();
        }
-    } 
+      }
   }
-}
+  
+  void dimUp() {
+    brightness = brightness + dimAmount;
+    if (brightness >= limit) {
+        brightness = limit;
+    }
+  }
+  
+  void dimDown() {
+    brightness = brightness - dimAmount;
+    if (brightness <= 0) {
+        brightness = 0;
+        state = "OFF";
+    }
+  }
+  
+  void fadeUp() {
+    brightness = brightness + fadeAmount;
+    if (brightness >= limit) {
+        brightness = limit;
+    }
+   }
+  
+  void fadeDown() {
+    brightness = brightness -fadeAmount;
+    if (brightness <= 0) {
+        brightness = 0;
+     }
+    }
+  
+  void printState() {
+    Serial.print(state);
+    Serial.print(" ");
+    Serial.print("Brightness: ");
+    Serial.println(brightness);
+  }
+  
+
 
