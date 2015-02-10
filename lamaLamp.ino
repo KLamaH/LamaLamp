@@ -29,9 +29,6 @@ void loop()  {
       brightness = 0;
       state = "OFF";
       printState();
-      //Serial.print("Helligkeit: 0% (");
-      //Serial.print(brightness);
-      //Serial.println(")");
     break; 
     case '1':
       brightness = 64;
